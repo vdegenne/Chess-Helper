@@ -47,35 +47,16 @@ export class ComponentChessboard implements IChessboard {
     const moveDetails = this.game.getMove(move);
     const isPromotion = Boolean(moveDetails.promotion);
 
-    // simulating user board mouse interaction
-    const fromSqPos = this._getSquarePosition(fromSq);
-    const toSqPos = this._getSquarePosition(toSq);
-    dispatchPointerEvent(this.element, 'pointerdown', { x: fromSqPos.x, y: fromSqPos.y });
-    dispatchPointerEvent(this.element, 'pointerup', { x: toSqPos.x, y: toSqPos.y });
+    const fromPosition = this._getSquarePosition(fromSq);
+    const toPosition = this._getSquarePosition(toSq);
+    dispatchPointerEvent(this.element, 'pointerdown', { x: fromPosition.x, y: fromPosition.y });
+    dispatchPointerEvent(this.element, 'pointerup', { x: toPosition.x, y: toPosition.y });
 
-    // if (!isPromotion || !promotionPiece) {
-    //   const fromCoords = squareToCoords(fromSq).join('');
-    //   const pieceElement = this.element.querySelector(`.piece.square-${fromCoords}`);
-    //   if (pieceElement) {
-    //     const fromPosition = this._getSquarePosition(fromSq);
-    //     dispatchPointerEvent(pieceElement, 'pointerdown', {
-    //       x: fromPosition.x,
-    //       y: fromPosition.y,
-    //     });
-
-    //     const toPosition = this._getSquarePosition(toSq);
-    //     dispatchPointerEvent(pieceElement, 'pointerup', {
-    //       x: toPosition.x,
-    //       y: toPosition.y,
-    //     });
-    //   }
-    // } else {
     this.game.move({
       ...move,
       promotion: promotionPiece,
       animate: false
     });
-    // }
   }
 
   isLegalMove(fromSq: TArea, toSq: TArea) {
@@ -206,7 +187,7 @@ export class ComponentChessboard implements IChessboard {
   }
 
   _getSquarePosition(square: TArea, fromDoc: boolean = true) {
-    const isFlipped = this.element.classList.contains('flipped');
+    const isFlipped = this.element.game.getOptions().flipped;
     const coords = squareToCoords(square);
     const { left, top, width } = this.element.getBoundingClientRect();
     const squareWidth = width / 8;

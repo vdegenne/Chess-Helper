@@ -219,7 +219,10 @@ describe('getLegalMoves', function() {
       clearMarkedArrows: () => {},
       markArea: (square: TArea) => {},
       unmarkArea: (square: TArea) => {},
+      clearMarkedAreas: () => {},
+      clearAllMarkings: () => {},
       onMove: () => {},
+      submitDailyMove: () => {},
     };
   };
 

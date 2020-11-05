@@ -11,6 +11,7 @@ import {
 } from './types';
 import {
   squareToCoords,
+  ALL_AREAS,
 } from '../../utils';
 import {
   dispatchPointerEvent,
@@ -44,9 +45,6 @@ export class ComponentChessboard implements IChessboard {
 
   makeMove(fromSq: TArea, toSq: TArea, promotionPiece?: string) {
     const move = { from: fromSq, to: toSq };
-    const moveDetails = this.game.getMove(move);
-    const isPromotion = Boolean(moveDetails.promotion);
-
     const fromPosition = this._getSquarePosition(fromSq);
     const toPosition = this._getSquarePosition(toSq);
     dispatchPointerEvent(this.element, 'pointerdown', { x: fromPosition.x, y: fromPosition.y });
@@ -123,7 +121,12 @@ export class ComponentChessboard implements IChessboard {
   }
 
   clearMarkedArrows() {
-    this.game.clearMarkings(['arrow']);
+    const markings = this.game.getMarkings();
+    const arrowMarkings = markings.arrow;
+    Object.values(arrowMarkings).forEach((arrow) => {
+      const { from, to } = arrow;
+      this.unmarkArrow(from, to);
+    });
   }
 
   markArea(square: TArea) {
@@ -160,8 +163,26 @@ export class ComponentChessboard implements IChessboard {
     });
   }
 
+  clearMarkedAreas() {
+    ALL_AREAS.forEach((area: TArea) => {
+      this.unmarkArea(area);
+    });
+  }
+
+  clearAllMarkings() {
+    this.clearMarkedAreas();
+    this.clearMarkedArrows();
+  }
+
   onMove(fn: (move: IMoveDetails) => void): void {
     this.game.on('Move', (event) => fn(this._getMoveData(event)));
+  }
+
+  submitDailyMove() {
+    const dailyComponent = document.querySelector('.daily-game-footer-component');
+    if (dailyComponent) {
+      (<any>dailyComponent).__vue__.$emit('save-move');
+    }
   }
 
   _getMoveData(event: IMoveEvent): IMoveDetails {

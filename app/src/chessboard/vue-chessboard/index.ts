@@ -4,6 +4,7 @@ import {
   squareToCoords,
   coordsToSquare,
   RED_SQUARE_COLOR,
+  ALL_AREAS,
 } from '../../utils';
 import {
   AnyFunction,
@@ -226,6 +227,17 @@ export class VueChessboard implements IChessboard {
     }
   }
 
+  clearMarkedAreas() {
+    ALL_AREAS.forEach((area: TArea) => {
+      this.unmarkArea(area);
+    });
+  }
+
+  clearAllMarkings() {
+    this.clearMarkedAreas();
+    this.clearMarkedArrows();
+  }
+
   _getSquarePosition(square: TArea, fromDoc: boolean = true) {
     const isFlipped = this.element.classList.contains('flipped');
     const coords = squareToCoords(square);
@@ -286,5 +298,9 @@ export class VueChessboard implements IChessboard {
         }
       });
     });
+  }
+
+  submitDailyMove() {
+    // noop
   }
 }
